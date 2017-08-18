@@ -72,9 +72,7 @@ vl_extensions = [
 ]
 
 # Grab all the pyx and pxd Cython files for uploading to pypi
-cython_files = walk_for_package_data('*.p[xy][xd]')
-if IS_WIN:
-    cython_files.append('vl.dll')
+cython_files = walk_for_package_data('*.[dp][xyl][xdl]')
 
 setup(
     name='cyvlfeat',
