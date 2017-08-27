@@ -1,16 +1,20 @@
+from __future__ import print_function
 from setuptools import setup, find_packages, Extension
 import pkg_resources
 from Cython.Build import cythonize
 import os.path as op
+import sys
 import os
 import platform
 import fnmatch
 import versioneer
+from shutil import copyfile
 
+INCLUDE_DIRS = [pkg_resources.resource_filename('numpy', 'core/include'), 
+                os.path.join(os.path.dirname(sys.executable),'Library','include')]
+LIBRARY_DIRS = [os.path.join(os.path.dirname(sys.executable),'Library','bin')]
 
-INCLUDE_DIRS = [pkg_resources.resource_filename('numpy', 'core/include')]
-LIBRARY_DIRS = []
-
+print(INCLUDE_DIRS)
 
 SYS_PLATFORM = platform.system().lower()
 IS_WIN = platform.system() == 'Windows'
@@ -19,6 +23,11 @@ IS_OSX = 'darwin' == SYS_PLATFORM
 IS_UNIX = IS_LINUX or IS_OSX
 IS_CONDA = os.environ.get('CONDA_BUILD', False)
 
+def check_copy(src, dst):    
+    if not os.path.exists(src):
+        raise RuntimeError('%s not found' % src)        
+    print('Copying %s to %s' % (src,dst))
+    copyfile(src, dst)
 
 def walk_for_package_data(ext_pattern):
     paths = []
@@ -50,11 +59,13 @@ def gen_extension(path_name, sources):
 # that the vlfeat vl folder is on the PATH (for the headers)
 # and that the vl.dll file is visible to the build system
 # as well.
-if IS_WIN and IS_CONDA:
-    conda_bin_dir = os.environ['LIBRARY_BIN']
-    conda_vl_dll_path = op.join(conda_bin_dir, 'vl.dll')
-    INCLUDE_DIRS.append(os.environ['LIBRARY_INC'])
-    LIBRARY_DIRS.append(conda_bin_dir)
+if IS_WIN:
+    vl_dll_path = os.path.join(os.path.dirname(sys.executable),'Library','bin', 'vl.dll')
+    check_copy(vl_dll_path, 'cyvlfeat/vl.dll')
+    # sync with the list just below
+    cythonized_folders = ['sift', 'fisher', 'hog', 'kmeans', 'generic', 'gmm']
+    for f in cythonized_folders:
+        check_copy(vl_dll_path, os.path.join('cyvlfeat', f, 'vl.dll'))
 
 vl_extensions = [
     gen_extension('cyvlfeat.sift.cysift',
@@ -70,6 +81,8 @@ vl_extensions = [
     gen_extension('cyvlfeat.gmm.cygmm',
                   [op.join('cyvlfeat', 'gmm', 'cygmm.pyx')])
 ]
+
+
 
 # Grab all the pyx and pxd Cython files for uploading to pypi
 cython_files = walk_for_package_data('*.[dp][xyl][xdl]')
