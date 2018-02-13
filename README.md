@@ -14,7 +14,7 @@ git clone https://github.com/VLAM3D/cyvlfeat.git
 cd cylvfeat
 conda -n create buildcyvlfeat python=x.y numpy Cython
 activate buildcyvlfeat
-conda install -c menpo cyvlfeat
+conda install -c menpo vlfeat
 python setup.py bdist_wheel
 ~~~~
 

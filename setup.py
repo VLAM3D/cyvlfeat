@@ -51,6 +51,9 @@ def gen_extension(path_name, sources):
     }
     if IS_UNIX:
         kwargs['extra_compile_args'] = ['-Wno-unused-function', '-Wno-strict-prototypes']
+    if IS_LINUX:
+        # Add shared lib relative path to RPATH so that every modules find the packaged libvl.so
+        kwargs['extra_link_args'] = [ "-Wl,-rpath,${ORIGIN}:${ORIGIN}/.." ]
     return Extension(path_name, **kwargs)
 
 
@@ -68,6 +71,10 @@ if IS_WIN:
     cythonized_folders = ['sift', 'fisher', 'hog', 'kmeans', 'generic', 'gmm']
     for f in cythonized_folders:
         check_copy(vl_dll_path, os.path.join('cyvlfeat', f, 'vl.dll'))
+elif IS_LINUX:
+    vl_so_path = os.path.join(os.path.dirname(sys.executable),'..','lib', 'libvl.so')
+    print(vl_so_path)
+    check_copy(vl_so_path, 'cyvlfeat/libvl.so')
 
 vl_extensions = [
     gen_extension('cyvlfeat.sift.cysift',
@@ -88,6 +95,7 @@ vl_extensions = [
 
 # Grab all the pyx and pxd Cython files for uploading to pypi
 cython_files = walk_for_package_data('*.[dp][xyl][xdl]')
+cython_files += walk_for_package_data('*.so')
 
 setup(
     name='cyvlfeat',
