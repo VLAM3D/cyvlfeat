@@ -6,6 +6,7 @@ cyvlfeat.egg-info/*
 *~
 *.pyc
 *.so
+cyvlfeat/*
 
 # Let's just ignore all cython built files
 cyvlfeat/hog/cyhog.c
