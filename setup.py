@@ -10,7 +10,7 @@ import fnmatch
 import versioneer
 from shutil import copyfile
 
-INCLUDE_DIRS = [pkg_resources.resource_filename('numpy', 'core/include'), 
+INCLUDE_DIRS = [pkg_resources.resource_filename('numpy', 'core/include'),
                 os.path.join(os.path.dirname(sys.executable),'Library','include')]
 LIBRARY_DIRS = [os.path.join(os.path.dirname(sys.executable),'Library','bin')]
 
@@ -23,9 +23,9 @@ IS_OSX = 'darwin' == SYS_PLATFORM
 IS_UNIX = IS_LINUX or IS_OSX
 IS_CONDA = os.environ.get('CONDA_BUILD', False)
 
-def check_copy(src, dst):    
+def check_copy(src, dst):
     if not os.path.exists(src):
-        raise RuntimeError('%s not found' % src)        
+        raise RuntimeError('%s not found' % src)
     print('Copying %s to %s' % (src,dst))
     copyfile(src, dst)
 
