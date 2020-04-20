@@ -11,9 +11,14 @@ import versioneer
 from shutil import copyfile
 from distutils.sysconfig import get_python_inc
 
+<<<<<<< HEAD
 INCLUDE_DIRS = [pkg_resources.resource_filename('numpy', 'core/include'), 
                 os.path.join(os.path.dirname(sys.executable),'Library','include'),
                 os.path.join(get_python_inc(),'..')]
+=======
+INCLUDE_DIRS = [pkg_resources.resource_filename('numpy', 'core/include'),
+                os.path.join(os.path.dirname(sys.executable),'Library','include')]
+>>>>>>> build_wheel
 LIBRARY_DIRS = [os.path.join(os.path.dirname(sys.executable),'Library','bin')]
 
 print(INCLUDE_DIRS)
